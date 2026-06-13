@@ -1,0 +1,4 @@
+- [ ] GitHub Pages 已启用 ⚠️ 需要手动在仓库设置中启用
+- [x] 部署分支设置正确（main branch）
+- [x] GitHub Actions workflow 已创建
+- [ ] 网站可通过 https://abmc-alan.github.io/XEX/ 访问
