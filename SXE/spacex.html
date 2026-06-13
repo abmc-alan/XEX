@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>SpaceX Explorer</title>
+    <style>
+/* ========================================
+   SpaceX Explorer - 全局样式
+   ======================================== */
+
+/* CSS 变量 */
+:root {
+    --bg: #000000;
+    --bg2: #0a0a0a;
+    --bg3: #111111;
+    --ink: #ffffff;
+    --muted: #888888;
+    --rule: #333333;
+    --accent: #ffffff;
+    --accent2: #cccccc;
+    --success: #00ff88;
+    --warning: #ffaa00;
+    --danger: #ff4444;
+    --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-mono: 'Courier New', monospace;
+    --nav-height: 60px;
+    --max-width: 1400px;
+    --section-padding: 80px;
+}
+
+/* 重置 */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+}
+
+/* 选择 */
+::selection {
+    background: var(--ink);
+    color: var(--bg);
+}
+
+/* 链接 */
+a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+/* 按钮 */
+button {
+    font-family: var(--font-main);
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--ink);
+    transition: all 0.3s ease;
+}
+
+/* 图片 */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ========================================
+   导航栏
+   ======================================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--rule);
+}
+
+.nav-brand .logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 0;
+}
+
+.nav-link {
+    display: block;
+    padding: 0 20px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: var(--nav-height);
+    position: relative;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    opacity: 1;
+}
+
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* 移动端菜单按钮 */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--ink);
+    transition: all 0.3s ease;
+}
+
+/* ========================================
+   主内容区
+   ======================================== */
+.app {
+    padding-top: var(--nav-height);
+    min-height: 100vh;
+}
+
+.module {
+    display: none;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.module.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 模块标题 */
+.module-header {
+    padding: 60px 40px 30px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.module-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+}
+
+/* CTA 按钮 */
+.cta-button {
+    display: inline-block;
+    padding: 16px 48px;
+    border: 2px solid var(--ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 32px;
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: var(--ink);
+    color: var(--bg);
+    opacity: 1;
+}
+
+/* 刷新按钮 */
+.refresh-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+    border-color: var(--ink);
+    transform: rotate(180deg);
+}
+
+.refresh-btn.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 状态标签 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+.status-upcoming {
+    background: var(--warning);
+    color: var(--bg);
+}
+
+.status-success {
+    background: var(--success);
+    color: var(--bg);
+}
+
+.status-failed {
+    background: var(--danger);
+    color: var(--ink);
+}
+
+/* ========================================
+   首页模块样式
+   ======================================== */
+
+/* 英雄区域 */
+.hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: 
+        linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23001830'/><stop offset='0.5' stop-color='%230a0a1a'/><stop offset='1' stop-color='%23000000'/></linearGradient></defs><rect width='1920' height='1080' fill='url(%23g)'/>%3Cg fill='%23ffffff'%3E%3Ccircle cx='200' cy='150' r='1'/%3E%3Ccircle cx='400' cy='80' r='1.5'/%3E%3Ccircle cx='600' cy='220' r='0.8'/%3E%3Ccircle cx='800' cy='120' r='1.2'/%3E%3Ccircle cx='1000' cy='200' r='1'/%3E%3Ccircle cx='1200' cy='90' r='0.9'/%3E%3Ccircle cx='1400' cy='180' r='1.1'/%3E%3Ccircle cx='1600' cy='130' r='1.3'/%3E%3Ccircle cx='1800' cy='250' r='1'/%3E%3Ccircle cx='150' cy='400' r='0.8'/%3E%3Ccircle cx='350' cy='450' r='1.1'/%3E%3Ccircle cx='550' cy='380' r='1'/%3E%3Ccircle cx='750' cy='420' r='1.2'/%3E%3Ccircle cx='950' cy='350' r='1'/%3E%3Ccircle cx='1150' cy='400' r='0.9'/%3E%3Ccircle cx='1350' cy='450' r='1.1'/%3E%3Ccircle cx='1550' cy='380' r='1'/%3E%3Ccircle cx='1750' cy='420' r='1'/%3E%3C/g><g stroke='%23ffffff' stroke-width='1' opacity='0.15'><line x1='960' y1='400' x2='900' y2='700'/><line x1='960' y1='400' x2='1020' y2='700'/></g><ellipse cx='960' cy='800' rx='120' ry='20' fill='%23ffffff' opacity='0.05'/></svg>") center/cover no-repeat;
+    padding: 0 20px;
+}
+
+.hero-content {
+    max-width: 900px;
+    animation: fadeInUp 1s ease 0.3s both;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+}
+
+/* 滚动指示器 */
+.hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 1s ease 1s both;
+}
+
+.scroll-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--ink), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.5; transform: scaleY(0.7); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 特色卡片区域 */
+.home-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 100px 40px;
+}
+
+.feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 48px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.feature-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-8px);
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 24px;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* ========================================
+   资讯模块样式
+   ======================================== */
+
+.news-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 40px 80px;
+}
+
+/* 头条新闻 */
+.news-hero {
+    position: relative;
+    height: 400px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--rule);
+}
+
+.news-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.news-hero:hover .news-hero-image {
+    transform: scale(1.05);
+}
+
+.news-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 60px 40px 40px;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+}
+
+.news-hero-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.news-hero-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.news-hero-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+/* 新闻网格 */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.news-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.news-card:nth-child(1) { animation-delay: 0.05s; }
+.news-card:nth-child(2) { animation-delay: 0.1s; }
+.news-card:nth-child(3) { animation-delay: 0.15s; }
+.news-card:nth-child(4) { animation-delay: 0.2s; }
+.news-card:nth-child(5) { animation-delay: 0.25s; }
+.news-card:nth-child(6) { animation-delay: 0.3s; }
+
+.news-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-4px);
+}
+
+.news-card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.news-card-content {
+    padding: 24px;
+}
+
+.news-card-source {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.news-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-card-summary {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-card-date {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+}
+
+/* 离线模式：新闻图片背景（CSS 渐变代替外部图片） */
+.news-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: transform 0.6s ease;
+}
+.news-hero:hover .news-hero-bg { transform: scale(1.05); }
+
+.news-card-image {
+    width: 100%;
+    height: 180px;
+    position: relative;
+}
+
+.bg-gradient-starship {
+    background:
+        radial-gradient(ellipse at center top, #1a3a5c 0%, #0a0a1a 40%, #000 100%);
+}
+.bg-gradient-starlink::before,
+.news-card-image::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: 3px;
+    height: 50%;
+    background: linear-gradient(to bottom, transparent, #fff, transparent);
+    opacity: 0.3;
+}
+
+.bg-gradient-starlink {
+    background: linear-gradient(135deg, #0a1a2c 0%, #1a3a5c 50%, #000 100%);
+    position: relative;
+}
+.bg-gradient-starlink::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 1px),
+        radial-gradient(circle at 60% 20%, #fff 0.5px, transparent 1px),
+        radial-gradient(circle at 80% 50%, #fff 0.5px, transparent 1px),
+        radial-gradient(circle at 40% 70%, #fff 0.5px, transparent 1px),
+        radial-gradient(circle at 70% 80%, #fff 0.5px, transparent 1px);
+    opacity: 0.3;
+}
+
+.bg-gradient-dragon {
+    background: linear-gradient(180deg, #1a2a3a 0%, #2a3a4a 50%, #0a0a0a 100%);
+    position: relative;
+}
+.bg-gradient-dragon::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 20%;
+    width: 40px;
+    height: 70%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border-radius: 50% 50% 30% 30% / 40% 40% 20% 20%;
+}
+
+.bg-gradient-sea {
+    background:
+        linear-gradient(to bottom, #1a2a3a 0%, #2a4a5c 40%, #0a1a2c 100%);
+    position: relative;
+}
+.bg-gradient-sea::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 30%;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+}
+
+.bg-gradient-moon {
+    background:
+        radial-gradient(ellipse at 70% 40%, #3a3a4a 0%, #1a1a2a 50%, #000 100%);
+    position: relative;
+}
+.bg-gradient-moon::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 65%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ddd, #888);
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.bg-gradient-launch {
+    background:
+        linear-gradient(to bottom, #0a0a1a 0%, #1a1a2a 30%, #2a1a0a 70%, #1a0a0a 100%);
+    position: relative;
+    overflow: hidden;
+}
+.bg-gradient-launch::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    width: 4px;
+    height: 60%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, rgba(255,200,100,0.6), rgba(255,100,50,0.2), transparent);
+    filter: blur(2px);
+}
+
+.bg-gradient-default {
+    background: linear-gradient(135deg, #0a1a2c 0%, #1a2a3a 50%, #000 100%);
+    position: relative;
+}
+
+/* 新闻状态 */
+.news-status {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.news-status.error {
+    color: var(--danger);
+}
+
+.news-status.loading {
+    color: var(--muted);
+}
+
+/* 骨架屏 */
+.skeleton {
+    background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s ease infinite;
+}
+
+@keyframes skeletonLoading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ========================================
+   火箭模块样式
+   ======================================== */
+
+.rocket-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    max-width: var(--max-width);
+    margin: 0 auto 40px;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--rule);
+}
+
+.rocket-tab {
+    padding: 16px 32px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.rocket-tab:hover {
+    opacity: 0.8;
+}
+
+.rocket-tab.active {
+    opacity: 1;
+    border-bottom-color: var(--ink);
+}
+
+.rocket-display {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 40px 80px;
+}
+
+.rocket-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.rocket-visual {
+    position: relative;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rocket-svg-container {
+    width: 100%;
+    max-width: 300px;
+}
+
+.rocket-svg-container svg {
+    width: 100%;
+    height: auto;
+}
+
+.rocket-details h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.rocket-subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 40px;
+}
+
+.rocket-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.spec-item {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+}
+
+.spec-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.spec-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.spec-detail {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.rocket-description {
+    margin-top: 40px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--muted);
+}
+
+/* 火箭导航按钮 */
+.rocket-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.rocket-nav-btn {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.rocket-nav-btn:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+}
+
+/* ========================================
+   发射模块样式
+   ======================================== */
+
+.launch-countdown-section {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 40px 60px;
+    text-align: center;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.countdown-item {
+    text-align: center;
+}
+
+.countdown-value {
+    display: block;
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 12px;
+}
+
+/* 发射列表 */
+.launch-list-section {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 40px 80px;
+}
+
+.launch-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.launch-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 24px;
+    align-items: center;
+    padding: 24px 32px;
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    transition: all 0.3s ease;
+}
+
+.launch-item:hover {
+    border-color: var(--ink);
+}
+
+.launch-status {
+    min-width: 100px;
+    text-align: center;
+}
+
+.launch-info h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.launch-info p {
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.launch-date {
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+.launch-date .date-day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+}
+
+/* ========================================
+   模拟器模块样式
+   ======================================== */
+
+.simulator-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 40px 80px;
+}
+
+/* 组装区域 */
+.assembly-section {
+    margin-bottom: 40px;
+}
+
+.assembly-area {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    min-height: 500px;
+}
+
+.parts-panel {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rocket-part {
+    width: 100%;
+    height: 60px;
+    background: var(--bg3);
+    border: 2px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: grab;
+    transition: all 0.3s ease;
+    user-select: none;
+    touch-action: none;
+}
+
+.rocket-part:hover {
+    border-color: var(--ink);
+    background: var(--bg);
+}
+
+.rocket-part.dragging-ghost {
+    opacity: 0.95;
+    cursor: grabbing;
+    z-index: 9999;
+    position: fixed;
+    box-shadow: 0 15px 40px rgba(0, 255, 136, 0.3), 0 0 0 2px rgba(0, 255, 136, 0.6);
+    transform: scale(1.08) rotate(-1deg);
+    pointer-events: none;
+    border-color: #00ff88 !important;
+}
+
+.rocket-part.placed {
+    border-color: var(--success);
+    background: rgba(0, 255, 136, 0.15);
+    cursor: default;
+    color: var(--success);
+}
+
+.rocket-part.auto-place {
+    animation: pulseGreen 0.6s ease;
+}
+
+@keyframes pulseGreen {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+    50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+    100% { transform: scale(1); box-shadow: none; }
+}
+
+.rocket-assembly-slot {
+    background: var(--bg2);
+    border: 2px dashed var(--rule);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    min-height: 500px;
+    gap: 6px;
+}
+
+.rocket-assembly-slot.drag-over {
+    border-color: var(--ink);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.assembly-slot {
+    width: 120px;
+    height: 50px;
+    border: 2px dashed var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.assembly-slot.drag-over {
+    border-color: var(--success);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.assembly-slot.filled {
+    border: none;
+    padding: 0;
+    opacity: 1;
+    height: 60px;
+}
+
+.assembly-progress {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--bg2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--ink);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    min-width: 80px;
+    text-align: right;
+}
+
+/* 发射台场景 */
+.launchpad-section {
+    text-align: center;
+}
+
+.launchpad-canvas-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(to bottom, #000000 0%, #0a0a1a 50%, #1a0a0a 100%);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+}
+
+#launchpadCanvas {
+    width: 100%;
+    height: 100%;
+}
+
+.flight-data {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 16px 24px;
+    border: 1px solid var(--rule);
+}
+
+.data-item {
+    text-align: center;
+}
+
+.data-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.data-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+}
+
+.launch-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.launch-btn {
+    padding: 16px 64px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.launch-btn:hover {
+    background: var(--muted);
+}
+
+.launch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.reset-btn {
+    padding: 16px 48px;
+    border: 2px solid var(--rule);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    border-color: var(--ink);
+}
+
+.countdown-timer {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-top: 24px;
+    font-variant-numeric: tabular-nums;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========================================
+   响应式设计
+   ======================================== */
+
+/* 平板 */
+@media (max-width: 1024px) {
+    .home-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .news-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rocket-info {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .rocket-visual {
+        min-height: 300px;
+    }
+
+    .rocket-specs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .launch-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .launch-status {
+        order: -1;
+    }
+
+    .launch-date {
+        text-align: center;
+    }
+
+    .assembly-area {
+        grid-template-columns: 1fr;
+    }
+
+    .parts-panel {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .rocket-part {
+        width: 140px;
+    }
+}
+
+/* 手机横屏 */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.98);
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--rule);
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .nav-menu.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .nav-link {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+
+    .module-header {
+        padding: 40px 20px 20px;
+    }
+
+    .module-title {
+        font-size: 1.75rem;
+    }
+
+    .home-features {
+        grid-template-columns: 1fr;
+        padding: 60px 20px;
+    }
+
+    .news-container {
+        padding: 0 20px 60px;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-hero {
+        height: 300px;
+    }
+
+    .news-hero-overlay {
+        padding: 40px 20px 20px;
+    }
+
+    .news-hero-title {
+        font-size: 1.25rem;
+    }
+
+    .rocket-selector {
+        flex-wrap: wrap;
+        padding: 0 20px;
+    }
+
+    .rocket-tab {
+        padding: 12px 20px;
+        font-size: 0.75rem;
+    }
+
+    .rocket-display {
+        padding: 0 20px 60px;
+    }
+
+    .rocket-specs {
+        grid-template-columns: 1fr;
+    }
+
+    .countdown-display {
+        gap: 20px;
+    }
+
+    .countdown-value {
+        font-size: 2.5rem;
+    }
+
+    .launch-countdown-section,
+    .launch-list-section {
+        padding: 0 20px 40px;
+    }
+
+    .simulator-container {
+        padding: 0 20px 60px;
+    }
+
+    .launchpad-canvas-container {
+        height: 350px;
+    }
+
+    .flight-data {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+    }
+
+    .launch-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .launch-btn,
+    .reset-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* 手机竖屏 */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .countdown-display {
+        gap: 12px;
+    }
+
+    .countdown-value {
+        font-size: 2rem;
+    }
+
+    .countdown-label {
+        font-size: 0.7rem;
+    }
+
+    .feature-card {
+        padding: 32px 24px;
+    }
+
+    .rocket-tab {
+        padding: 10px 14px;
+        font-size: 0.7rem;
+    }
+
+    .spec-value {
+        font-size: 1.25rem;
+    }
+}
+
+/* ========================================
+   通用动画
+   ======================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes countdownPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.animate-fadeIn { animation: fadeIn 0.5s ease both; }
+.animate-fadeInUp { animation: fadeInUp 0.6s ease both; }
+.animate-fadeInDown { animation: fadeInDown 0.6s ease both; }
+.animate-slideInLeft { animation: slideInLeft 0.6s ease both; }
+.animate-slideInRight { animation: slideInRight 0.6s ease both; }
+.animate-scaleIn { animation: scaleIn 0.5s ease both; }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="navbar" class="navbar">
+        <div class="nav-brand">
+            <span class="logo">SPACEX</span>
+        </div>
+        <button class="nav-toggle" id="navToggle" aria-label="菜单">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="#home" class="nav-link active" data-module="home">首页</a></li>
+            <li><a href="#news" class="nav-link" data-module="news">资讯</a></li>
+            <li><a href="#rockets" class="nav-link" data-module="rockets">火箭</a></li>
+            <li><a href="#launches" class="nav-link" data-module="launches">发射</a></li>
+            <li><a href="#simulator" class="nav-link" data-module="simulator">模拟器</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main id="app" class="app">
+        <!-- 首页模块 -->
+        <section id="home" class="module active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">MAKING LIFE<br>MULTIPLANETARY</h1>
+                    <p class="hero-subtitle">探索太空，推动人类成为多行星物种</p>
+                    <a href="#rockets" class="cta-button">探索火箭</a>
+                </div>
+                <div class="hero-scroll">
+                    <span class="scroll-text">SCROLL</span>
+                    <div class="scroll-line"></div>
+                </div>
+            </div>
+            <div class="home-features">
+                <div class="feature-card" onclick="location.hash='rockets'">
+                    <div class="feature-icon">&#128640;</div>
+                    <h3>FALCON 9</h3>
+                    <p>世界上第一个轨道级可重复使用火箭</p>
+                </div>
+                <div class="feature-card" onclick="location.hash='news'">
+                    <div class="feature-icon">&#128240;</div>
+                    <h3>最新资讯</h3>
+                    <p>获取全球航天领域最新动态</p>
+                </div>
+                <div class="feature-card" onclick="location.hash='launches'">
+                    <div class="feature-icon">&#128197;</div>
+                    <h3>发射任务</h3>
+                    <p>查看即将进行的发射任务</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 资讯模块 -->
+        <section id="news" class="module">
+            <div class="module-header">
+                <h2 class="module-title">最新资讯</h2>
+                <button class="refresh-btn" id="refreshNews" title="刷新资讯">&#x21bb;</button>
+            </div>
+            <div class="news-container">
+                <div class="news-hero" id="newsHero"></div>
+                <div class="news-grid" id="newsGrid"></div>
+            </div>
+            <div class="news-status" id="newsStatus"></div>
+        </section>
+
+        <!-- 火箭模块 -->
+        <section id="rockets" class="module">
+            <div class="module-header">
+                <h2 class="module-title">火箭家族</h2>
+            </div>
+            <div class="rocket-selector">
+                <button class="rocket-tab active" data-rocket="falcon9">FALCON 9</button>
+                <button class="rocket-tab" data-rocket="falconHeavy">FALCON HEAVY</button>
+                <button class="rocket-tab" data-rocket="starship">STARSHIP</button>
+                <button class="rocket-tab" data-rocket="dragon">DRAGON</button>
+            </div>
+            <div class="rocket-display" id="rocketDisplay"></div>
+        </section>
+
+        <!-- 发射模块 -->
+        <section id="launches" class="module">
+            <div class="module-header">
+                <h2 class="module-title">发射任务</h2>
+            </div>
+            <div class="launch-countdown-section">
+                <h3 class="section-subtitle">下一次发射</h3>
+                <div class="countdown-display" id="countdownDisplay">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="cdDays">00</span>
+                        <span class="countdown-label">DAYS</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="cdHours">00</span>
+                        <span class="countdown-label">HOURS</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="cdMinutes">00</span>
+                        <span class="countdown-label">MINUTES</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="cdSeconds">00</span>
+                        <span class="countdown-label">SECONDS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="launch-list-section">
+                <h3 class="section-subtitle">任务列表</h3>
+                <div class="launch-list" id="launchList"></div>
+            </div>
+        </section>
+
+        <!-- 模拟器模块 -->
+        <section id="simulator" class="module">
+            <div class="module-header">
+                <h2 class="module-title">火箭模拟器</h2>
+            </div>
+            <div class="simulator-container">
+                <div class="assembly-section" id="assemblySection">
+                    <h3 class="section-subtitle">火箭组装</h3>
+                    <div class="assembly-area">
+                        <div class="parts-panel" id="partsPanel"></div>
+                        <div class="rocket-assembly-slot" id="rocketAssemblySlot"></div>
+                    </div>
+                    <div class="assembly-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="assemblyProgress"></div>
+                        </div>
+                        <span class="progress-text" id="assemblyProgressText">0/6 部件</span>
+                    </div>
+                </div>
+                <div class="launchpad-section" id="launchpadSection" style="display:none;">
+                    <div class="launchpad-canvas-container">
+                        <canvas id="launchpadCanvas"></canvas>
+                        <div class="flight-data" id="flightData">
+                            <div class="data-item">
+                                <span class="data-label">速度</span>
+                                <span class="data-value" id="flightSpeed">0 km/h</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">高度</span>
+                                <span class="data-value" id="flightAltitude">0 m</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">推力</span>
+                                <span class="data-value" id="flightThrust">0 kN</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="launch-controls">
+                        <button class="launch-btn" id="launchBtn">发射</button>
+                        <button class="reset-btn" id="resetBtn">重置</button>
+                    </div>
+                    <div class="countdown-timer" id="simCountdown"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+// ========================================
+// 平台检测与适配
+// ========================================
+const Platform = {
+    isDesktop: () => typeof window.__TAURI__ !== 'undefined',
+    isAndroid: () => typeof window.Capacitor !== 'undefined',
+    isWeb: () => !Platform.isDesktop() && !Platform.isAndroid(),
+    isTouch: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+
+    init() {
+        if (this.isDesktop()) document.body.classList.add('platform-desktop');
+        else if (this.isAndroid()) document.body.classList.add('platform-android');
+        else document.body.classList.add('platform-web');
+        if (this.isTouch()) document.body.classList.add('platform-touch');
+        if (this.isDesktop()) document.addEventListener('contextmenu', e => e.preventDefault());
+    }
+};
+
+// ========================================
+// 本地缓存管理
+// ========================================
+class CacheManager {
+    constructor(options = {}) {
+        this.ttl = options.ttl || 5 * 60 * 1000;
+        this.prefix = options.prefix || 'spacex_';
+    }
+    get(key) {
+        try {
+            const item = localStorage.getItem(this.prefix + key);
+            if (!item) return null;
+            const { data, timestamp } = JSON.parse(item);
+            if (Date.now() - timestamp > this.ttl) { this.remove(key); return null; }
+            return data;
+        } catch (e) { return null; }
+    }
+    set(key, data) {
+        try { localStorage.setItem(this.prefix + key, JSON.stringify({ data, timestamp: Date.now() })); } catch (e) {}
+    }
+    remove(key) { try { localStorage.removeItem(this.prefix + key); } catch (e) {} }
+}
+const appCache = new CacheManager({ ttl: 5 * 60 * 1000 });
+
+// ========================================
+// Spaceflight News API 封装
+// ========================================
+class SpaceflightNewsAPI {
+    constructor() {
+        this.baseURL = null; // 离线模式：不使用 API
+        this.cache = appCache;
+    }
+    async getArticles(limit = 10) {
+        // 离线模式：直接返回静态数据
+        return this.getFallbackData();
+    }
+    getFallbackData() {
+        return {
+            results: [
+                { id: 1, title: 'SpaceX 星舰完成最新飞行测试', summary: 'SpaceX 的星舰在德克萨斯州博卡奇卡发射场完成了最新的飞行测试，取得了重要的技术突破。', url: '#', image_url: 'gradient-starship', published_at: new Date().toISOString(), news_site: 'SpaceX' },
+                { id: 2, title: 'Falcon 9 成功发射新一代星链卫星', summary: 'SpaceX 使用 Falcon 9 火箭成功将最新一批星链卫星送入轨道，进一步扩展全球互联网覆盖。', url: '#', image_url: 'gradient-starlink', published_at: new Date(Date.now() - 86400000).toISOString(), news_site: 'SpaceX' },
+                { id: 3, title: 'NASA 与 SpaceX 签署新的载人航天合同', summary: 'NASA 与 SpaceX 签署了新的商业载人航天合同，将继续使用龙飞船运送宇航员往返国际空间站。', url: '#', image_url: 'gradient-dragon', published_at: new Date(Date.now() - 172800000).toISOString(), news_site: 'NASA' },
+                { id: 4, title: 'SpaceX 海上回收平台完成升级', summary: 'SpaceX 的自主海上无人机回收平台完成了最新升级，将支持更重载荷的火箭回收任务。', url: '#', image_url: 'gradient-sea', published_at: new Date(Date.now() - 259200000).toISOString(), news_site: 'SpaceX' },
+                { id: 5, title: '星舰月球着陆器通过关键设计评审', summary: 'SpaceX 为 NASA 阿尔忒弥斯计划开发的星舰月球着陆器通过了关键设计评审，标志着项目进入新阶段。', url: '#', image_url: 'gradient-moon', published_at: new Date(Date.now() - 345600000).toISOString(), news_site: 'NASA' },
+                { id: 6, title: 'SpaceX 发射频率创历史新高', summary: 'SpaceX 在2024年实现了创纪录的发射频率，平均每几天就有一次发射任务，展示了强大的运营能力。', url: '#', image_url: 'gradient-launch', published_at: new Date(Date.now() - 432000000).toISOString(), news_site: 'SpaceX' }
+            ]
+        };
+    }
+}
+const newsAPI = new SpaceflightNewsAPI();
+
+// ========================================
+// 前端路由系统
+// ========================================
+class Router {
+    constructor() {
+        this.routes = {};
+        this.currentModule = null;
+        this.beforeHooks = [];
+        this.afterHooks = [];
+    }
+    register(path, moduleName, options = {}) {
+        this.routes[path] = { module: moduleName, onEnter: options.onEnter || null, onLeave: options.onLeave || null };
+    }
+    navigate(path) { window.location.hash = path; }
+    getCurrentPath() { return window.location.hash.slice(1) || 'home'; }
+    async resolve() {
+        const path = this.getCurrentPath();
+        const route = this.routes[path] || this.routes['home'];
+        if (!route) return;
+        for (const hook of this.beforeHooks) { const result = await hook(path, this.currentModule); if (result === false) return; }
+        if (this.currentModule && this.routes[this.currentModule]?.onLeave) this.routes[this.currentModule].onLeave();
+        document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
+        const targetModule = document.getElementById(route.module);
+        if (targetModule) { targetModule.classList.add('active'); window.scrollTo(0, 0); }
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + path) link.classList.add('active');
+        });
+        if (route.onEnter) route.onEnter();
+        this.currentModule = path;
+        for (const hook of this.afterHooks) hook(path, route.module);
+    }
+    init() {
+        window.addEventListener('hashchange', () => this.resolve());
+        window.addEventListener('load', () => this.resolve());
+    }
+}
+const router = new Router();
+
+// ========================================
+// 键盘快捷键管理
+// ========================================
+class KeyboardManager {
+    constructor() { this.shortcuts = {}; this.enabled = true; }
+    register(key, callback, options = {}) {
+        this.shortcuts[key.toLowerCase()] = { callback, ctrl: options.ctrl || false, shift: options.shift || false, alt: options.alt || false, preventDefault: options.preventDefault !== false };
+    }
+    handle(event) {
+        if (!this.enabled) return;
+        const key = event.key.toLowerCase();
+        const shortcut = this.shortcuts[key];
+        if (!shortcut) return;
+        if (shortcut.ctrl && !event.ctrlKey) return;
+        if (shortcut.shift && !event.shiftKey) return;
+        if (shortcut.alt && !event.altKey) return;
+        if (shortcut.preventDefault) event.preventDefault();
+        shortcut.callback(event);
+    }
+    init() { document.addEventListener('keydown', (e) => this.handle(e)); }
+}
+const keyboard = new KeyboardManager();
+
+// ========================================
+// 首页模块
+// ========================================
+const HomeModule = {
+    init() { console.log('Home module initialized'); }
+};
+
+// ========================================
+// 资讯模块
+// ========================================
+const NewsModule = {
+    autoRefreshInterval: null,
+    refreshInterval: 5 * 60 * 1000,
+    init() { this.bindEvents(); this.loadNews(); this.startAutoRefresh(); },
+    bindEvents() {
+        const refreshBtn = document.getElementById('refreshNews');
+        if (refreshBtn) refreshBtn.addEventListener('click', () => this.loadNews(true));
+    },
+    startAutoRefresh() {
+        this.autoRefreshInterval = setInterval(() => { if (router.getCurrentPath() === 'news') this.loadNews(); }, this.refreshInterval);
+    },
+    stopAutoRefresh() { if (this.autoRefreshInterval) { clearInterval(this.autoRefreshInterval); this.autoRefreshInterval = null; } },
+    async loadNews(force = false) {
+        const refreshBtn = document.getElementById('refreshNews');
+        const statusEl = document.getElementById('newsStatus');
+        if (refreshBtn) refreshBtn.classList.add('spinning');
+        if (statusEl) { statusEl.textContent = '加载中...'; statusEl.className = 'news-status loading'; }
+        try {
+            const data = await newsAPI.getArticles(7);
+            this.renderNews(data.results || data);
+            if (statusEl) { statusEl.textContent = `最后更新: ${new Date().toLocaleTimeString()}`; statusEl.className = 'news-status'; }
+        } catch (error) {
+            if (statusEl) { statusEl.textContent = '加载失败，显示备用数据'; statusEl.className = 'news-status error'; }
+        } finally { if (refreshBtn) refreshBtn.classList.remove('spinning'); }
+    },
+    renderNews(articles) {
+        const heroEl = document.getElementById('newsHero');
+        const gridEl = document.getElementById('newsGrid');
+        if (!articles || articles.length === 0) return;
+        const hero = articles[0];
+        if (heroEl) {
+            heroEl.innerHTML = `<div class="news-hero-bg bg-${hero.image_url || 'default'}"></div><div class="news-hero-overlay"><span class="news-hero-tag">头条</span><h3 class="news-hero-title">${hero.title}</h3><p class="news-hero-meta">${hero.news_site || 'SpaceX'} · ${this.formatDate(hero.published_at)}</p></div>`;
+            heroEl.onclick = () => window.open(hero.url, '_blank');
+        }
+        const cards = articles.slice(1, 7);
+        if (gridEl) {
+            gridEl.innerHTML = cards.map((article, index) => `<div class="news-card" style="animation-delay: ${index * 0.05}s"><div class="news-card-image bg-${article.image_url || 'default'}"></div><div class="news-card-content"><div class="news-card-source">${article.news_site || 'SpaceX'}</div><h4 class="news-card-title">${article.title}</h4><p class="news-card-summary">${article.summary || ''}</p><div class="news-card-date">${this.formatDate(article.published_at)}</div></div></div>`).join('');
+            gridEl.querySelectorAll('.news-card').forEach((card, index) => card.addEventListener('click', () => window.open(cards[index].url, '_blank')));
+        }
+    },
+    formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        if (diff < 3600000) { const minutes = Math.floor(diff / 60000); return minutes < 1 ? '刚刚' : `${minutes}分钟前`; }
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+        return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+};
+
+// ========================================
+// 火箭模块
+// ========================================
+const RocketModule = {
+    currentRocket: 'falcon9',
+    rocketOrder: ['falcon9', 'falconHeavy', 'starship', 'dragon'],
+    rocketsData: null,
+    async init() { this.rocketsData = this.getFallbackData(); this.bindEvents(); this.renderRocket(this.currentRocket); },
+    getFallbackData() {
+        return {
+            falcon9: { name: 'FALCON 9', subtitle: '世界上第一个轨道级可重复使用火箭', description: 'Falcon 9 是一种两级火箭，由 SpaceX 设计和制造，用于将人员和载荷可靠、安全地运送到地球轨道及更远的地方。Falcon 9 是世界上第一个轨道级可重复使用火箭，使 SpaceX 能够多次使用火箭的最昂贵部件，从而降低了进入太空的成本。', specs: [{ label: '高度', value: '70 米', detail: '229.6 英尺' }, { label: '直径', value: '3.7 米', detail: '12 英尺' }, { label: '质量', value: '549 吨', detail: '1,210,000 磅' }, { label: 'LEO 运力', value: '22,800 千克', detail: '50,265 磅' }, { label: 'GTO 运力', value: '8,300 千克', detail: '18,300 磅' }, { label: '起飞推力', value: '7,600 千牛', detail: '1,710,000 磅力' }], stages: '2', engines: '9 x Merlin 1D + 1 x Merlin Vacuum', firstFlight: '2010年6月4日', reusability: '一级助推器可重复使用' },
+            falconHeavy: { name: 'FALCON HEAVY', subtitle: '现役最强大的运载火箭', description: 'Falcon Heavy 是目前在役的最强大的运载火箭。它由三个 Falcon 9 九引擎核心组成，其 27 台 Merlin 引擎共同产生超过 500 万磅的推力，相当于大约 18 架 747 飞机。', specs: [{ label: '高度', value: '70 米', detail: '229.6 英尺' }, { label: '直径', value: '3.7 米', detail: '12 英尺' }, { label: '质量', value: '1,420 吨', detail: '3,130,000 磅' }, { label: 'LEO 运力', value: '63,800 千克', detail: '140,660 磅' }, { label: 'GTO 运力', value: '26,700 千克', detail: '58,860 磅' }, { label: '起飞推力', value: '22,819 千牛', detail: '5,130,000 磅力' }], stages: '2', engines: '27 x Merlin 1D + 1 x Merlin Vacuum', firstFlight: '2018年2月6日', reusability: '两侧助推器和中心核心可重复使用' },
+            starship: { name: 'STARSHIP', subtitle: '下一代完全可重复使用运输系统', description: 'Starship 是 SpaceX 正在开发的下一代完全可重复使用运输系统，旨在将船员和货物运送到地球轨道、月球、火星及更远的地方。Starship 将成为世界上有史以来最强大的运载火箭，能够将超过 100 公吨的载荷运送到地球轨道。', specs: [{ label: '高度', value: '121 米', detail: '397 英尺' }, { label: '直径', value: '9 米', detail: '30 英尺' }, { label: '质量', value: '5,000 吨', detail: '11,000,000 磅' }, { label: 'LEO 运力', value: '150,000 千克', detail: '330,000 磅' }, { label: '推力', value: '72,000 千牛', detail: '16,000,000 磅力' }, { label: '发动机', value: '33 + 6', detail: 'Raptor 发动机' }], stages: '2', engines: '33 x Raptor (Super Heavy) + 6 x Raptor (Starship)', firstFlight: '2023年4月20日', reusability: '完全可重复使用' },
+            dragon: { name: 'DRAGON', subtitle: '首个将人类送往空间站的商业航天器', description: 'Dragon 是一种自由飞行的航天器，设计用于将货物和人员运送到轨道目的地。Dragon 是目前唯一能够将大量货物运回地球的运营航天器，也是首个将人类送往国际空间站的商业航天器。', specs: [{ label: '高度', value: '8.1 米', detail: '26.6 英尺' }, { label: '直径', value: '4 米', detail: '13 英尺' }, { label: '胶囊体积', value: '9.3 立方米', detail: '328 立方英尺' }, { label: '货物容量', value: '6,000 千克', detail: '13,228 磅' }, { label: '返回容量', value: '3,000 千克', detail: '6,614 磅' }, { label: '人员容量', value: '7 人', detail: '宇航员' }], stages: 'N/A', engines: '16 x Draco + 8 x SuperDraco', firstFlight: '2010年12月8日', reusability: '胶囊可重复使用' }
+        };
+    },
+    bindEvents() {
+        document.querySelectorAll('.rocket-tab').forEach(tab => {
+            tab.addEventListener('click', () => this.switchRocket(tab.dataset.rocket));
+        });
+    },
+    switchRocket(rocket) {
+        if (!this.rocketsData[rocket]) return;
+        this.currentRocket = rocket;
+        document.querySelectorAll('.rocket-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.rocket === rocket));
+        this.renderRocket(rocket);
+    },
+    renderRocket(rocket) {
+        const data = this.rocketsData[rocket];
+        if (!data) return;
+        const display = document.getElementById('rocketDisplay');
+        if (!display) return;
+        display.innerHTML = `<div class="rocket-info"><div class="rocket-visual">${this.getRocketSVG(rocket)}</div><div class="rocket-details"><h3>${data.name}</h3><p class="rocket-subtitle">${data.subtitle}</p><div class="rocket-specs">${data.specs.map(spec => `<div class="spec-item"><div class="spec-label">${spec.label}</div><div class="spec-value">${spec.value}</div><div class="spec-detail">${spec.detail}</div></div>`).join('')}</div><p class="rocket-description">${data.description}</p></div></div><div class="rocket-nav"><button class="rocket-nav-btn" onclick="RocketModule.prevRocket()">&#8592;</button><button class="rocket-nav-btn" onclick="RocketModule.nextRocket()">&#8594;</button></div>`;
+    },
+    getRocketSVG(rocket) {
+        const svgs = {
+            falcon9: `<svg viewBox="0 0 100 400" class="rocket-svg"><defs><linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#333"/><stop offset="50%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#333"/></linearGradient></defs><rect x="30" y="200" width="40" height="180" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M25 220 L30 220 M70 220 L75 220" stroke="#888" stroke-width="2"/><path d="M25 240 L30 240 M70 240 L75 240" stroke="#888" stroke-width="2"/><path d="M30 370 L20 385 M70 370 L80 385" stroke="#888" stroke-width="2"/><rect x="32" y="190" width="36" height="10" fill="#555" stroke="#666"/><rect x="35" y="80" width="30" height="110" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M35 80 L50 20 L65 80 Z" fill="#e0e0e0" stroke="#999"/><ellipse cx="50" cy="380" rx="15" ry="5" fill="#444"/></svg>`,
+            falconHeavy: `<svg viewBox="0 0 180 400" class="rocket-svg"><defs><linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#333"/><stop offset="50%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#333"/></linearGradient></defs><rect x="10" y="200" width="35" height="180" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M10 370 L0 385 M45 370 L55 385" stroke="#888" stroke-width="2"/><ellipse cx="27" cy="380" rx="12" ry="4" fill="#444"/><rect x="135" y="200" width="35" height="180" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M135 370 L125 385 M170 370 L180 385" stroke="#888" stroke-width="2"/><ellipse cx="153" cy="380" rx="12" ry="4" fill="#444"/><rect x="70" y="200" width="40" height="180" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M70 370 L60 385 M110 370 L120 385" stroke="#888" stroke-width="2"/><ellipse cx="90" cy="380" rx="15" ry="5" fill="#444"/><rect x="75" y="80" width="30" height="120" fill="url(#bodyGrad)" stroke="#666" stroke-width="1"/><path d="M75 80 L90 20 L105 80 Z" fill="#e0e0e0" stroke="#999"/></svg>`,
+            starship: `<svg viewBox="0 0 100 500" class="rocket-svg"><defs><linearGradient id="starshipGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ccc"/><stop offset="50%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#ccc"/></linearGradient></defs><rect x="20" y="250" width="60" height="220" fill="#ddd" stroke="#999" stroke-width="1"/><rect x="20" y="250" width="60" height="20" fill="#888" stroke="#999"/><path d="M15 280 L20 280 M80 280 L85 280" stroke="#666" stroke-width="3"/><path d="M15 320 L20 320 M80 320 L85 320" stroke="#666" stroke-width="3"/><ellipse cx="50" cy="470" rx="25" ry="8" fill="#555"/><rect x="25" y="80" width="50" height="170" fill="url(#starshipGrad)" stroke="#999" stroke-width="1"/><path d="M25 80 L50 10 L75 80 Z" fill="#e8e8e8" stroke="#bbb"/><path d="M20 120 L5 100 M80 120 L95 100" stroke="#888" stroke-width="3"/><path d="M22 200 L8 220 M78 200 L92 220" stroke="#888" stroke-width="3"/></svg>`,
+            dragon: `<svg viewBox="0 0 120 200" class="rocket-svg"><defs><linearGradient id="dragonGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ddd"/><stop offset="50%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#ddd"/></linearGradient></defs><ellipse cx="60" cy="100" rx="45" ry="70" fill="url(#dragonGrad)" stroke="#999" stroke-width="1"/><path d="M30 50 Q60 0 90 50" fill="#e8e8e8" stroke="#bbb"/><rect x="5" y="80" width="20" height="40" fill="#333" stroke="#666"/><rect x="95" y="80" width="20" height="40" fill="#333" stroke="#666"/><ellipse cx="60" cy="35" rx="15" ry="8" fill="#888" stroke="#666"/><circle cx="40" cy="120" r="5" fill="#666"/><circle cx="80" cy="120" r="5" fill="#666"/><circle cx="60" cy="140" r="5" fill="#666"/><path d="M25 160 L15 175 M95 160 L105 175" stroke="#888" stroke-width="2"/></svg>`
+        };
+        return svgs[rocket] || svgs.falcon9;
+    },
+    prevRocket() { const i = this.rocketOrder.indexOf(this.currentRocket); this.switchRocket(this.rocketOrder[i <= 0 ? this.rocketOrder.length - 1 : i - 1]); },
+    nextRocket() { const i = this.rocketOrder.indexOf(this.currentRocket); this.switchRocket(this.rocketOrder[i >= this.rocketOrder.length - 1 ? 0 : i + 1]); }
+};
+
+// ========================================
+// 发射模块
+// ========================================
+const LaunchesModule = {
+    countdownInterval: null,
+    nextLaunchDate: null,
+    init() { this.setupNextLaunch(); this.renderLaunchList(); this.startCountdown(); },
+    setupNextLaunch() { this.nextLaunchDate = new Date(); this.nextLaunchDate.setDate(this.nextLaunchDate.getDate() + 3); this.nextLaunchDate.setHours(14, 30, 0, 0); },
+    startCountdown() { this.updateCountdown(); this.countdownInterval = setInterval(() => this.updateCountdown(), 1000); },
+    stopCountdown() { if (this.countdownInterval) { clearInterval(this.countdownInterval); this.countdownInterval = null; } },
+    updateCountdown() {
+        if (!this.nextLaunchDate) return;
+        const diff = this.nextLaunchDate - new Date();
+        const d = Math.max(0, Math.floor(diff / 86400000));
+        const h = Math.max(0, Math.floor((diff % 86400000) / 3600000));
+        const m = Math.max(0, Math.floor((diff % 3600000) / 60000));
+        const s = Math.max(0, Math.floor((diff % 60000) / 1000));
+        const el = id => document.getElementById(id);
+        if (el('cdDays')) el('cdDays').textContent = String(d).padStart(2, '0');
+        if (el('cdHours')) el('cdHours').textContent = String(h).padStart(2, '0');
+        if (el('cdMinutes')) el('cdMinutes').textContent = String(m).padStart(2, '0');
+        if (el('cdSeconds')) el('cdSeconds').textContent = String(s).padStart(2, '0');
+    },
+    renderLaunchList() {
+        const listEl = document.getElementById('launchList');
+        if (!listEl) return;
+        const launches = [
+            { name: 'Starlink Group 6-45', site: '肯尼迪航天中心 LC-39A', date: new Date(Date.now() + 3 * 86400000), status: 'upcoming' },
+            { name: 'Falcon 9 - NROL-123', site: '范登堡太空军基地 SLC-4E', date: new Date(Date.now() + 7 * 86400000), status: 'upcoming' },
+            { name: 'Starship IFT-4', site: '博卡奇卡星基地', date: new Date(Date.now() + 14 * 86400000), status: 'upcoming' },
+            { name: 'Falcon Heavy - GOES-U', site: '肯尼迪航天中心 LC-39A', date: new Date(Date.now() - 5 * 86400000), status: 'success' },
+            { name: 'Falcon 9 - CRS-30', site: '肯尼迪航天中心 LC-39A', date: new Date(Date.now() - 12 * 86400000), status: 'success' },
+            { name: 'Falcon 9 - Starlink Group 6-42', site: '卡纳维拉尔角 SLC-40', date: new Date(Date.now() - 18 * 86400000), status: 'success' }
+        ];
+        listEl.innerHTML = launches.map(launch => {
+            const dateStr = launch.date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+            const timeStr = launch.date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            const statusClass = launch.status === 'upcoming' ? 'status-upcoming' : 'status-success';
+            const statusText = launch.status === 'upcoming' ? '即将发射' : '成功';
+            return `<div class="launch-item"><div class="launch-status"><span class="status-badge ${statusClass}">${statusText}</span></div><div class="launch-info"><h4>${launch.name}</h4><p>${launch.site}</p></div><div class="launch-date"><span class="date-day">${dateStr}</span><span>${timeStr}</span></div></div>`;
+        }).join('');
+    }
+};
+
+// ========================================
+// Canvas 粒子系统
+// ========================================
+class ParticleSystem {
+    constructor(canvas, maxParticles = 500) {
+        this.canvas = canvas; this.ctx = canvas.getContext('2d');
+        this.maxParticles = maxParticles; this.particles = []; this.running = false; this.animationId = null;
+    }
+    resize() { const rect = this.canvas.parentElement.getBoundingClientRect(); this.canvas.width = rect.width; this.canvas.height = rect.height; }
+    addParticle(particle) { if (this.particles.length < this.maxParticles) this.particles.push(particle); }
+    update() { this.particles = this.particles.filter(p => { p.update(); return p.isAlive(); }); }
+    draw() { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.particles.forEach(p => p.draw(this.ctx)); }
+    start() { this.running = true; this.loop(); }
+    stop() { this.running = false; if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; } }
+    loop() { if (!this.running) return; this.update(); this.draw(); this.animationId = requestAnimationFrame(() => this.loop()); }
+    clear() { this.particles = []; this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); }
+}
+
+class Particle {
+    constructor(x, y) { this.x = x; this.y = y; this.vx = 0; this.vy = 0; this.life = 1.0; this.decay = 0.01; this.size = 5; }
+    update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
+    draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${this.life})`; ctx.fill(); }
+    isAlive() { return this.life > 0; }
+}
+
+class FlameParticle extends Particle {
+    constructor(x, y, intensity = 1) {
+        super(x, y); this.intensity = intensity;
+        this.vx = (Math.random() - 0.5) * 3 * intensity; this.vy = Math.random() * 5 * intensity + 2;
+        this.life = 1.0; this.decay = Math.random() * 0.03 + 0.02; this.size = Math.random() * 15 * intensity + 5;
+        this.color = [[255,255,255],[255,220,80],[255,140,20],[255,60,0],[150,30,0]][Math.floor(Math.random() * 5)];
+    }
+    update() { super.update(); this.size *= 0.97; this.vx += (Math.random() - 0.5) * 0.5; }
+    draw(ctx) {
+        const [r,g,b] = this.color;
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(${r},${g},${b},${this.life * 0.8})`; ctx.fill();
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2); ctx.fillStyle = `rgba(${r},${g},${b},${this.life * 0.2})`; ctx.fill();
+    }
+}
+
+class FlameSystem extends ParticleSystem {
+    constructor(canvas) { super(canvas, 300); this.emitters = []; }
+    addEmitter(x, y, intensity = 1) { this.emitters.push({ x, y, intensity }); }
+    update() { this.emitters.forEach(e => { for (let i = 0; i < 3; i++) this.addParticle(new FlameParticle(e.x + (Math.random()-0.5)*20, e.y, e.intensity)); }); super.update(); }
+}
+
+class SmokeParticle extends Particle {
+    constructor(x, y, intensity = 1) {
+        super(x, y); this.intensity = intensity;
+        this.vx = (Math.random() - 0.5) * 2 * intensity; this.vy = -Math.random() * 2 * intensity - 1;
+        this.life = 1.0; this.decay = Math.random() * 0.008 + 0.005; this.size = Math.random() * 20 * intensity + 10;
+        this.gray = Math.floor(Math.random() * 100 + 80);
+    }
+    update() { super.update(); this.size *= 1.01; this.vx += (Math.random() - 0.5) * 0.3; this.vy *= 0.99; }
+    draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(${this.gray},${this.gray},${this.gray},${this.life * 0.3})`; ctx.fill(); }
+}
+
+class SmokeSystem extends ParticleSystem {
+    constructor(canvas) { super(canvas, 200); this.emitters = []; }
+    addEmitter(x, y, intensity = 1) { this.emitters.push({ x, y, intensity }); }
+    update() { this.emitters.forEach(e => { if (Math.random() < 0.7) this.addParticle(new SmokeParticle(e.x + (Math.random()-0.5)*30, e.y, e.intensity)); }); super.update(); }
+}
+
+// ========================================
+// 火箭 Canvas 绘制与动画
+// ========================================
+class RocketCanvas {
+    constructor(canvas) {
+        this.canvas = canvas; this.ctx = canvas.getContext('2d');
+        this.rocketY = 0; this.rocketX = 0; this.scale = 1; this.rotation = 0;
+        this.flameSystem = null; this.smokeSystem = null; this.animationId = null;
+        this.isLaunching = false; this.launchTime = 0; this.towerArmsOpen = true;
+    }
+    resize() { const rect = this.canvas.parentElement.getBoundingClientRect(); this.canvas.width = rect.width; this.canvas.height = rect.height; this.rocketX = this.canvas.width / 2; this.rocketY = this.canvas.height - 150; }
+    init() { this.resize(); this.flameSystem = new FlameSystem(this.canvas); this.smokeSystem = new SmokeSystem(this.canvas); this.draw(); }
+    draw() {
+        const ctx = this.ctx, w = this.canvas.width, h = this.canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        this.drawBackground(ctx, w, h);
+        this.drawLaunchTower(ctx, w, h);
+        this.drawRocket(ctx, this.rocketX, this.rocketY);
+        if (this.isLaunching) { this.flameSystem.draw(); this.smokeSystem.draw(); }
+    }
+    drawBackground(ctx, w, h) {
+        const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#000011'); g.addColorStop(0.5, '#0a0a1a'); g.addColorStop(1, '#1a0a0a'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff'; for (let i = 0; i < 50; i++) { ctx.globalAlpha = 0.3 + (i % 5) * 0.15; ctx.fillRect((i * 137.5) % w, (i * 73.3) % (h * 0.6), (i % 3) + 1, (i % 3) + 1); }
+        ctx.globalAlpha = 1; ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, h - 50, w, 50); ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, h - 50); ctx.lineTo(w, h - 50); ctx.stroke();
+    }
+    drawLaunchTower(ctx, w, h) {
+        const tx = w / 2 - 80, th = 300, gy = h - 50;
+        ctx.fillStyle = '#444'; ctx.fillRect(tx - 10, gy - th, 20, th);
+        ctx.strokeStyle = '#666'; ctx.lineWidth = 4;
+        if (this.towerArmsOpen) {
+            ctx.beginPath(); ctx.moveTo(tx, gy - 200); ctx.lineTo(tx + 60, gy - 200); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(tx, gy - 180); ctx.lineTo(tx + 60, gy - 180); ctx.stroke();
+        } else {
+            ctx.beginPath(); ctx.moveTo(tx, gy - 200); ctx.lineTo(tx - 40, gy - 220); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(tx, gy - 180); ctx.lineTo(tx - 40, gy - 160); ctx.stroke();
+        }
+        ctx.fillStyle = '#ff0000'; ctx.beginPath(); ctx.arc(tx, gy - th + 10, 4, 0, Math.PI * 2); ctx.fill();
+    }
+    drawRocket(ctx, x, y) {
+        ctx.save(); ctx.translate(x, y); ctx.scale(this.scale, this.scale); ctx.rotate(this.rotation);
+        ctx.fillStyle = '#e0e0e0'; ctx.fillRect(-15, -100, 30, 100);
+        ctx.beginPath(); ctx.moveTo(-15, -100); ctx.lineTo(0, -130); ctx.lineTo(15, -100); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ccc'; ctx.fillRect(-16, -40, 32, 40);
+        ctx.fillStyle = '#555'; ctx.beginPath(); ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#888'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-15, -30); ctx.lineTo(-22, -35); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(15, -30); ctx.lineTo(22, -35); ctx.stroke();
+        ctx.fillStyle = '#333'; ctx.font = 'bold 8px Arial'; ctx.textAlign = 'center'; ctx.fillText('SPACEX', 0, -60);
+        ctx.restore();
+    }
+    startLaunch() {
+        this.isLaunching = true; this.launchTime = 0; this.towerArmsOpen = true;
+        this.flameSystem.clear(); this.smokeSystem.clear();
+        this.flameSystem.addEmitter(this.rocketX, this.rocketY); this.smokeSystem.addEmitter(this.rocketX, this.rocketY);
+        this.flameSystem.start(); this.smokeSystem.start(); this.animateLaunch();
+    }
+    animateLaunch() {
+        if (!this.isLaunching) return; this.launchTime++;
+        if (this.launchTime < 60) { if (this.launchTime === 30) this.towerArmsOpen = false; }
+        else { this.rocketY -= 2; this.scale = Math.min(1.2, this.scale + 0.002); this.flameSystem.emitters = [{ x: this.rocketX, y: this.rocketY }]; this.smokeSystem.emitters = [{ x: this.rocketX, y: this.rocketY }]; }
+        this.draw();
+        if (this.rocketY > -200) this.animationId = requestAnimationFrame(() => this.animateLaunch());
+        else this.stopLaunch();
+    }
+    stopLaunch() { this.isLaunching = false; this.flameSystem.stop(); this.smokeSystem.stop(); if (this.animationId) cancelAnimationFrame(this.animationId); }
+    reset() { this.stopLaunch(); this.rocketY = this.canvas.height - 150; this.rocketX = this.canvas.width / 2; this.scale = 1; this.rotation = 0; this.towerArmsOpen = true; this.launchTime = 0; this.flameSystem.clear(); this.smokeSystem.clear(); this.draw(); }
+}
+
+// ========================================
+// 飞行数据可视化
+// ========================================
+class FlightDataDisplay {
+    constructor() { this.speed = 0; this.altitude = 0; this.thrust = 0; this.targetSpeed = 0; this.targetAltitude = 0; this.targetThrust = 0; }
+    update(speed, altitude, thrust) { this.targetSpeed = speed; this.targetAltitude = altitude; this.targetThrust = thrust; }
+    animate() {
+        this.speed += (this.targetSpeed - this.speed) * 0.1; this.altitude += (this.targetAltitude - this.altitude) * 0.1; this.thrust += (this.targetThrust - this.thrust) * 0.1;
+        const el = id => document.getElementById(id);
+        if (el('flightSpeed')) el('flightSpeed').textContent = `${Math.round(this.speed)} km/h`;
+        if (el('flightAltitude')) el('flightAltitude').textContent = `${Math.round(this.altitude)} m`;
+        if (el('flightThrust')) el('flightThrust').textContent = `${Math.round(this.thrust)} kN`;
+    }
+    reset() { this.speed = 0; this.altitude = 0; this.thrust = 0; this.targetSpeed = 0; this.targetAltitude = 0; this.targetThrust = 0; this.animate(); }
+}
+
+// ========================================
+// 模拟器模块
+// ========================================
+const SimulatorModule = {
+    parts: [{ id: 'payload', name: '载荷', order: 0 }, { id: 'fairing', name: '整流罩', order: 1 }, { id: 'secondStage', name: '二级箭体', order: 2 }, { id: 'interstage', name: '级间段', order: 3 }, { id: 'firstStage', name: '一级箭体', order: 4 }, { id: 'landingLegs', name: '着陆支架', order: 5 }],
+    placedParts: [], rocketCanvas: null, flightData: null, launchState: 'idle', countdownValue: 10, countdownInterval: null, flightDataInterval: null, isAssemblyComplete: false,
+    init() { this.initAssembly(); this.initLaunchpad(); this.bindEvents(); },
+    initAssembly() {
+        const partsPanel = document.getElementById('partsPanel'), assemblySlot = document.getElementById('rocketAssemblySlot');
+        if (!partsPanel || !assemblySlot) return;
+        partsPanel.innerHTML = ''; assemblySlot.innerHTML = ''; this.placedParts = []; this.isAssemblyComplete = false;
+        this.parts.forEach(part => {
+            const partEl = document.createElement('div'); partEl.className = 'rocket-part'; partEl.dataset.partId = part.id; partEl.dataset.partOrder = part.order; partEl.textContent = part.name; partsPanel.appendChild(partEl);
+            const slotEl = document.createElement('div'); slotEl.className = 'assembly-slot'; slotEl.dataset.slotOrder = part.order; slotEl.textContent = part.name; assemblySlot.appendChild(slotEl);
+        });
+        this.initDragAndDrop(); this.updateProgress();
+    },
+    initLaunchpad() {
+        const canvas = document.getElementById('launchpadCanvas'); if (!canvas) return;
+        this.rocketCanvas = new RocketCanvas(canvas); this.rocketCanvas.init(); this.flightData = new FlightDataDisplay();
+        window.addEventListener('resize', () => { if (this.rocketCanvas) { this.rocketCanvas.resize(); this.rocketCanvas.draw(); } });
+    },
+    // 拖拽状态对象（用函数闭包方式保证每次组装都干净）
+    _dragInitialized: false,
+    _setupGlobalDrag() {
+        if (this._dragInitialized) return;
+        this._dragInitialized = true;
+        const drag = { ghost: null, original: null, startX: 0, startY: 0, offsetX: 0, offsetY: 0, moved: false };
+        const clearDrag = () => {
+            if (drag.ghost) { drag.ghost.remove(); drag.ghost = null; }
+            if (drag.original) { drag.original.style.opacity = ''; drag.original = null; }
+            const assemblySlot = document.getElementById('rocketAssemblySlot');
+            if (assemblySlot) assemblySlot.querySelectorAll('.assembly-slot.drag-over').forEach(s => s.classList.remove('drag-over'));
+        };
+        document.addEventListener('pointermove', (e) => {
+            if (!drag.ghost) return;
+            e.preventDefault();
+            drag.ghost.style.left = (e.clientX - drag.offsetX) + 'px';
+            drag.ghost.style.top = (e.clientY - drag.offsetY) + 'px';
+            if (Math.abs(e.clientX - drag.startX) > 5 || Math.abs(e.clientY - drag.startY) > 5) drag.moved = true;
+            // 高亮当前指针下方的空插槽
+            const assemblySlot = document.getElementById('rocketAssemblySlot');
+            if (assemblySlot) {
+                assemblySlot.querySelectorAll('.assembly-slot').forEach(slot => {
+                    slot.classList.remove('drag-over');
+                    if (slot.classList.contains('filled')) return;
+                    const sr = slot.getBoundingClientRect();
+                    if (e.clientX >= sr.left && e.clientX <= sr.right && e.clientY >= sr.top && e.clientY <= sr.bottom) slot.classList.add('drag-over');
+                });
+            }
+        });
+        document.addEventListener('pointerup', (e) => {
+            if (!drag.ghost || !drag.original) return;
+            const part = drag.original;
+            const assemblySlot = document.getElementById('rocketAssemblySlot');
+            if (assemblySlot) assemblySlot.querySelectorAll('.assembly-slot.drag-over').forEach(s => s.classList.remove('drag-over'));
+            if (drag.moved) {
+                // 拖拽：检查指针位置是否命中正确的插槽
+                if (assemblySlot) {
+                    const slots = assemblySlot.querySelectorAll('.assembly-slot');
+                    for (const slot of slots) {
+                        if (slot.classList.contains('filled')) continue;
+                        const sr = slot.getBoundingClientRect();
+                        if (e.clientX >= sr.left && e.clientX <= sr.right && e.clientY >= sr.top && e.clientY <= sr.bottom) {
+                            if (parseInt(part.dataset.partOrder) === parseInt(slot.dataset.slotOrder)) { this.placePart(part, slot, false); clearDrag(); return; }
+                        }
+                    }
+                }
+                clearDrag(); // 拖拽失败：仅清理
+            } else {
+                // 点击（无移动）：自动放置到正确插槽
+                const targetSlot = assemblySlot && assemblySlot.querySelector(`.assembly-slot[data-slot-order="${part.dataset.partOrder}"]`);
+                if (targetSlot && !targetSlot.classList.contains('filled')) this.placePart(part, targetSlot, true);
+                clearDrag();
+            }
+        });
+        document.addEventListener('pointercancel', (e) => clearDrag());
+        // 暴露 setupPart 供后续调用
+        this._setupSinglePart = (part) => {
+            part.addEventListener('pointerdown', (e) => {
+                if (part.classList.contains('placed')) return;
+                e.preventDefault();
+                const rect = part.getBoundingClientRect();
+                drag.startX = e.clientX; drag.startY = e.clientY;
+                drag.offsetX = e.clientX - rect.left; drag.offsetY = e.clientY - rect.top;
+                drag.moved = false;
+                // 创建独立的幽灵元素作为拖拽视觉（避免干扰原元素的 DOM 位置）
+                const ghost = document.createElement('div');
+                ghost.className = 'rocket-part dragging-ghost';
+                ghost.textContent = part.textContent;
+                ghost.style.position = 'fixed';
+                ghost.style.left = rect.left + 'px';
+                ghost.style.top = rect.top + 'px';
+                ghost.style.width = rect.width + 'px';
+                ghost.style.height = rect.height + 'px';
+                ghost.style.zIndex = '9999';
+                ghost.style.pointerEvents = 'none';
+                document.body.appendChild(ghost);
+                drag.ghost = ghost;
+                drag.original = part;
+                // 原元素淡出占位
+                part.style.opacity = '0.25';
+            });
+        };
+    },
+    initDragAndDrop() {
+        this._setupGlobalDrag();
+        const partsPanel = document.getElementById('partsPanel');
+        if (!partsPanel) return;
+        partsPanel.querySelectorAll('.rocket-part').forEach(part => {
+            if (!part._dragBound) { part._dragBound = true; this._setupSinglePart(part); }
+        });
+    },
+    placePart(part, slot, autoPlace = false) {
+        // 清理所有内联样式和标记
+        part.removeAttribute('style');
+        part.classList.remove('dragging');
+        part.classList.add('placed');
+        // 清空插槽内容后移动原 DOM 节点
+        slot.innerHTML = '';
+        slot.appendChild(part);
+        slot.classList.add('filled');
+        if (autoPlace) {
+            part.classList.add('auto-place');
+            setTimeout(() => part.classList.remove('auto-place'), 700);
+        }
+        this.placedParts.push(part.dataset.partId);
+        this.updateProgress();
+        if (this.placedParts.length === this.parts.length) {
+            this.isAssemblyComplete = true;
+            setTimeout(() => this.showLaunchpad(), 800);
+        }
+    },
+    updateProgress() { const p = (this.placedParts.length / this.parts.length) * 100; const pf = document.getElementById('assemblyProgress'), pt = document.getElementById('assemblyProgressText'); if (pf) pf.style.width = p + '%'; if (pt) pt.textContent = `${this.placedParts.length}/${this.parts.length} 部件`; },
+    showLaunchpad() { const a = document.getElementById('assemblySection'), l = document.getElementById('launchpadSection'); if (a) a.style.display = 'none'; if (l) { l.style.display = 'block'; l.classList.add('animate-fadeIn'); } if (this.rocketCanvas) { this.rocketCanvas.resize(); this.rocketCanvas.draw(); } },
+    showAssembly() { const a = document.getElementById('assemblySection'), l = document.getElementById('launchpadSection'); if (a) a.style.display = 'block'; if (l) l.style.display = 'none'; },
+    bindEvents() { const lb = document.getElementById('launchBtn'), rb = document.getElementById('resetBtn'); if (lb) lb.addEventListener('click', () => this.startLaunchSequence()); if (rb) rb.addEventListener('click', () => this.reset()); },
+    startLaunchSequence() { if (this.launchState !== 'idle') return; this.launchState = 'countdown'; this.countdownValue = 10; const lb = document.getElementById('launchBtn'); if (lb) lb.disabled = true; this.startCountdown(); },
+    startCountdown() { const el = document.getElementById('simCountdown'); this.countdownInterval = setInterval(() => { if (el) { el.textContent = this.countdownValue; el.style.animation = 'countdownPulse 0.5s ease'; setTimeout(() => el.style.animation = '', 500); } this.countdownValue--; if (this.countdownValue < 0) { clearInterval(this.countdownInterval); this.startLaunch(); } }, 1000); },
+    startLaunch() {
+        this.launchState = 'launching'; const el = document.getElementById('simCountdown'); if (el) el.textContent = 'LIFTOFF!';
+        if (this.rocketCanvas) this.rocketCanvas.startLaunch(); this.startFlightDataUpdate(); setTimeout(() => this.completeLaunch(), 8000);
+    },
+    startFlightDataUpdate() { let t = 0; this.flightDataInterval = setInterval(() => { t += 0.1; if (this.flightData) { this.flightData.update(Math.min(27000, t*t*50), Math.min(200000, t*t*300), Math.min(7600, 7000+Math.sin(t)*500)); this.flightData.animate(); } }, 100); },
+    completeLaunch() { this.launchState = 'completed'; const el = document.getElementById('simCountdown'); if (el) el.textContent = '发射成功!'; const lb = document.getElementById('launchBtn'); if (lb) lb.disabled = false; if (this.flightDataInterval) clearInterval(this.flightDataInterval); },
+    reset() { if (this.countdownInterval) clearInterval(this.countdownInterval); if (this.flightDataInterval) clearInterval(this.flightDataInterval); this.launchState = 'idle'; this.countdownValue = 10; this.placedParts = []; this.isAssemblyComplete = false; const el = document.getElementById('simCountdown'); if (el) el.textContent = ''; const lb = document.getElementById('launchBtn'); if (lb) lb.disabled = false; if (this.flightData) this.flightData.reset(); if (this.rocketCanvas) this.rocketCanvas.reset(); this.showAssembly(); this.initAssembly(); }
+};
+
+// ========================================
+// 应用主入口
+// ========================================
+const App = {
+    init() {
+        router.register('home', 'home', { onEnter: () => HomeModule.init() });
+        router.register('news', 'news', { onEnter: () => NewsModule.init(), onLeave: () => NewsModule.stopAutoRefresh() });
+        router.register('rockets', 'rockets', { onEnter: () => RocketModule.init() });
+        router.register('launches', 'launches', { onEnter: () => LaunchesModule.init(), onLeave: () => LaunchesModule.stopCountdown() });
+        router.register('simulator', 'simulator', { onEnter: () => SimulatorModule.init() });
+        router.init();
+        const navToggle = document.getElementById('navToggle'), navMenu = document.getElementById('navMenu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
+            navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => navMenu.classList.remove('open')));
+        }
+        Platform.init();
+        keyboard.register('1', () => router.navigate('home')); keyboard.register('2', () => router.navigate('news')); keyboard.register('3', () => router.navigate('rockets')); keyboard.register('4', () => router.navigate('launches')); keyboard.register('5', () => router.navigate('simulator'));
+        keyboard.register('r', () => { if (router.getCurrentPath() === 'news') { const rb = document.getElementById('refreshNews'); if (rb) rb.click(); } });
+        keyboard.register('escape', () => router.navigate('home'));
+        keyboard.register('arrowleft', () => { if (router.getCurrentPath() === 'rockets') RocketModule.prevRocket(); });
+        keyboard.register('arrowright', () => { if (router.getCurrentPath() === 'rockets') RocketModule.nextRocket(); });
+        keyboard.init();
+        console.log('SpaceX Explorer initialized');
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
