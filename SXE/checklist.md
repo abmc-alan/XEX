@@ -1,0 +1,9 @@
+- [x] Checkpoint 1: 项目初始化完成，基础框架可正常运行
+- [x] Checkpoint 2: 资讯模块显示正常，数据完整
+- [x] Checkpoint 3: 视频模块显示正常，可播放视频
+- [x] Checkpoint 4: 火箭组装模块功能完整，可拖拽组装
+- [x] Checkpoint 5: 发射台场景显示完整，火箭正确放置
+- [x] Checkpoint 6: 火箭发射动画流畅，倒计时正常
+- [x] Checkpoint 7: 导航切换功能正常，所有模块可访问
+- [x] Checkpoint 8: 响应式设计完成，移动端适配良好
+- [x] Checkpoint 9: 整体界面美观，符合Space X品牌风格
